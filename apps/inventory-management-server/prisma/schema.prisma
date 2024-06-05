@@ -1,0 +1,58 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  items       Item[]
+  name        String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Item {
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  categoryId     String?
+  createdAt      DateTime        @default(now())
+  description    String?
+  id             String          @id @default(cuid())
+  name           String?
+  price          Float?
+  quantity       Int?
+  stockMovements StockMovement[]
+  supplier       Supplier?       @relation(fields: [supplierId], references: [id])
+  supplierId     String?
+  updatedAt      DateTime        @updatedAt
+}
+
+model Supplier {
+  contact   String?
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  items     Item[]
+  name      String?
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model StockMovement {
+  createdAt    DateTime                       @default(now())
+  date         DateTime?
+  id           String                         @id @default(cuid())
+  item         Item?                          @relation(fields: [itemId], references: [id])
+  itemId       String?
+  movementType EnumStockMovementMovementType?
+  quantity     Int?
+  updatedAt    DateTime                       @updatedAt
+}
+
+enum EnumStockMovementMovementType {
+  Option1
+}
